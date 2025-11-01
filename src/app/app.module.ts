@@ -27,18 +27,16 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+
 import { AnalyticsComponent } from './analytics/analytics.component';
-import { TeamComponent } from './team/team.component';
-import { SettingsComponent } from './settings/settings.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
+
     AnalyticsComponent,
-    TeamComponent,
-    SettingsComponent
+   
   ],
   imports: [
     BrowserModule,

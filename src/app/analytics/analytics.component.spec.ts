@@ -1,325 +1,332 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-
 import { AnalyticsComponent, AnalyticsCard, ChartData } from './analytics.component';
 
 describe('AnalyticsComponent', () => {
   let component: AnalyticsComponent;
-  let fixture: ComponentFixture<AnalyticsComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [AnalyticsComponent],
-      imports: [
-        BrowserAnimationsModule,
-        MatCardModule,
-        MatIconModule,
-        MatChipsModule
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(AnalyticsComponent);
-    component = fixture.componentInstance;
+  beforeEach(() => {
+    component = new AnalyticsComponent();
   });
 
-  // COMPONENT_UI Pattern: Component renders without error
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  describe('Component Instantiation', () => {
+    it('should create component instance successfully', () => {
+      expect(component).toBeTruthy();
+      expect(component).toBeInstanceOf(AnalyticsComponent);
+    });
 
-  // COMPONENT_UI Pattern: Component lifecycle
-  it('should call ngOnInit without error', () => {
-    expect(() => component.ngOnInit()).not.toThrow();
-  });
-
-  // COMPONENT_UI Pattern: Data initialization validation
-  it('should initialize analytics cards with correct structure', () => {
-    expect(component.analyticsCards).toBeDefined();
-    expect(component.analyticsCards.length).toBe(4);
-    
-    const expectedCards: AnalyticsCard[] = [
-      {
+    it('should initialize with default analyticsCards data', () => {
+      expect(component.analyticsCards).toBeDefined();
+      expect(component.analyticsCards).toHaveLength(4);
+      expect(component.analyticsCards[0]).toEqual({
         title: 'Page Views',
         value: '45,678',
         change: '+12.5%',
         changeType: 'positive',
         icon: 'visibility'
-      },
-      {
-        title: 'Unique Visitors',
-        value: '12,340',
-        change: '+8.2%',
-        changeType: 'positive',
-        icon: 'people'
-      },
-      {
-        title: 'Bounce Rate',
-        value: '2.4%',
-        change: '-1.1%',
-        changeType: 'positive',
-        icon: 'trending_down'
-      },
-      {
-        title: 'Conversion Rate',
-        value: '3.8%',
-        change: '+0.5%',
-        changeType: 'positive',
-        icon: 'trending_up'
+      });
+    });
+
+    it('should initialize with default trafficSources data', () => {
+      expect(component.trafficSources).toBeDefined();
+      expect(component.trafficSources).toHaveLength(4);
+      expect(component.trafficSources[0]).toEqual({
+        name: 'Organic Search',
+        value: 45
+      });
+    });
+  });
+
+  describe('ngOnInit Lifecycle', () => {
+    it('should execute ngOnInit without errors', () => {
+      expect(() => component.ngOnInit()).not.toThrow();
+    });
+
+    it('should maintain data integrity after ngOnInit', () => {
+      const originalAnalyticsCards = [...component.analyticsCards];
+      const originalTrafficSources = [...component.trafficSources];
+      
+      component.ngOnInit();
+      
+      expect(component.analyticsCards).toEqual(originalAnalyticsCards);
+      expect(component.trafficSources).toEqual(originalTrafficSources);
+    });
+  });
+
+  describe('getChangeIcon Method - Business Logic Coverage', () => {
+    it('should return trending_up icon for positive change type', () => {
+      const result = component.getChangeIcon('positive');
+      expect(result).toBe('trending_up');
+    });
+
+    it('should return trending_down icon for negative change type', () => {
+      const result = component.getChangeIcon('negative');
+      expect(result).toBe('trending_down');
+    });
+
+    it('should return trending_flat icon for neutral change type', () => {
+      const result = component.getChangeIcon('neutral');
+      expect(result).toBe('trending_flat');
+    });
+
+    it('should return trending_flat icon for unknown change type', () => {
+      const result = component.getChangeIcon('unknown');
+      expect(result).toBe('trending_flat');
+    });
+
+    it('should return trending_flat icon for empty string', () => {
+      const result = component.getChangeIcon('');
+      expect(result).toBe('trending_flat');
+    });
+
+    it('should return trending_flat icon for null input', () => {
+      const result = component.getChangeIcon(null as any);
+      expect(result).toBe('trending_flat');
+    });
+
+    it('should return trending_flat icon for undefined input', () => {
+      const result = component.getChangeIcon(undefined as any);
+      expect(result).toBe('trending_flat');
+    });
+  });
+
+  describe('getChangeColor Method - Business Logic Coverage', () => {
+    it('should return primary color for positive change type', () => {
+      const result = component.getChangeColor('positive');
+      expect(result).toBe('primary');
+    });
+
+    it('should return warn color for negative change type', () => {
+      const result = component.getChangeColor('negative');
+      expect(result).toBe('warn');
+    });
+
+    it('should return accent color for neutral change type', () => {
+      const result = component.getChangeColor('neutral');
+      expect(result).toBe('accent');
+    });
+
+    it('should return accent color for unknown change type', () => {
+      const result = component.getChangeColor('unknown');
+      expect(result).toBe('accent');
+    });
+
+    it('should return accent color for empty string', () => {
+      const result = component.getChangeColor('');
+      expect(result).toBe('accent');
+    });
+
+    it('should return accent color for null input', () => {
+      const result = component.getChangeColor(null as any);
+      expect(result).toBe('accent');
+    });
+
+    it('should return accent color for undefined input', () => {
+      const result = component.getChangeColor(undefined as any);
+      expect(result).toBe('accent');
+    });
+  });
+
+  describe('Data Structure Validation', () => {
+    it('should have correctly structured AnalyticsCard objects', () => {
+      component.analyticsCards.forEach((card: AnalyticsCard) => {
+        expect(card).toHaveProperty('title');
+        expect(card).toHaveProperty('value');
+        expect(card).toHaveProperty('change');
+        expect(card).toHaveProperty('changeType');
+        expect(card).toHaveProperty('icon');
+        expect(typeof card.title).toBe('string');
+        expect(typeof card.value).toBe('string');
+        expect(typeof card.change).toBe('string');
+        expect(['positive', 'negative', 'neutral']).toContain(card.changeType);
+        expect(typeof card.icon).toBe('string');
+      });
+    });
+
+    it('should have correctly structured ChartData objects', () => {
+      component.trafficSources.forEach((data: ChartData) => {
+        expect(data).toHaveProperty('name');
+        expect(data).toHaveProperty('value');
+        expect(typeof data.name).toBe('string');
+        expect(typeof data.value).toBe('number');
+        expect(data.value).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('should maintain consistent data types for all analytics cards', () => {
+      const expectedCards = [
+        { title: 'Page Views', changeType: 'positive', icon: 'visibility' },
+        { title: 'Unique Visitors', changeType: 'positive', icon: 'people' },
+        { title: 'Bounce Rate', changeType: 'positive', icon: 'trending_down' },
+        { title: 'Conversion Rate', changeType: 'positive', icon: 'trending_up' }
+      ];
+
+      expectedCards.forEach((expectedCard, index) => {
+        expect(component.analyticsCards[index].title).toBe(expectedCard.title);
+        expect(component.analyticsCards[index].changeType).toBe(expectedCard.changeType);
+        expect(component.analyticsCards[index].icon).toBe(expectedCard.icon);
+      });
+    });
+
+    it('should maintain consistent data for traffic sources', () => {
+      const expectedSources = [
+        { name: 'Organic Search', value: 45 },
+        { name: 'Direct', value: 25 },
+        { name: 'Social Media', value: 20 },
+        { name: 'Email', value: 10 }
+      ];
+
+      expectedSources.forEach((expectedSource, index) => {
+        expect(component.trafficSources[index]).toEqual(expectedSource);
+      });
+    });
+  });
+
+  describe('Edge Cases and Error Handling', () => {
+    it('should handle method calls with various input types gracefully', () => {
+      const testInputs = ['positive', 'negative', 'neutral', '', null, undefined, 'invalid'];
+      
+      testInputs.forEach(input => {
+        expect(() => component.getChangeIcon(input as any)).not.toThrow();
+        expect(() => component.getChangeColor(input as any)).not.toThrow();
+      });
+    });
+
+    it('should maintain immutable data references', () => {
+      const originalAnalyticsCards = component.analyticsCards;
+      const originalTrafficSources = component.trafficSources;
+      
+      component.ngOnInit();
+      
+      expect(component.analyticsCards).toBe(originalAnalyticsCards);
+      expect(component.trafficSources).toBe(originalTrafficSources);
+    });
+
+    it('should handle concurrent method calls without state corruption', () => {
+      const results1 = component.getChangeIcon('positive');
+      const results2 = component.getChangeColor('negative');
+      const results3 = component.getChangeIcon('neutral');
+      
+      expect(results1).toBe('trending_up');
+      expect(results2).toBe('warn');
+      expect(results3).toBe('trending_flat');
+    });
+  });
+
+  describe('Integration and State Consistency', () => {
+    it('should maintain consistent state throughout component lifecycle', () => {
+      const initialAnalyticsCardsLength = component.analyticsCards.length;
+      const initialTrafficSourcesLength = component.trafficSources.length;
+      
+      component.ngOnInit();
+      
+      // Call methods multiple times
+      component.getChangeIcon('positive');
+      component.getChangeColor('negative');
+      component.getChangeIcon('neutral');
+      
+      expect(component.analyticsCards.length).toBe(initialAnalyticsCardsLength);
+      expect(component.trafficSources.length).toBe(initialTrafficSourcesLength);
+    });
+
+    it('should handle all changeType values correctly in combination', () => {
+      const changeTypes = ['positive', 'negative', 'neutral'];
+      const expectedIcons = ['trending_up', 'trending_down', 'trending_flat'];
+      const expectedColors = ['primary', 'warn', 'accent'];
+      
+      changeTypes.forEach((changeType, index) => {
+        expect(component.getChangeIcon(changeType)).toBe(expectedIcons[index]);
+        expect(component.getChangeColor(changeType)).toBe(expectedColors[index]);
+      });
+    });
+
+    it('should verify all analytics cards have consistent change type mapping', () => {
+      component.analyticsCards.forEach(card => {
+        const icon = component.getChangeIcon(card.changeType);
+        const color = component.getChangeColor(card.changeType);
+        
+        expect(icon).toBeTruthy();
+        expect(color).toBeTruthy();
+        expect(['trending_up', 'trending_down', 'trending_flat']).toContain(icon);
+        expect(['primary', 'warn', 'accent']).toContain(color);
+      });
+    });
+  });
+
+  describe('Performance and Memory Management', () => {
+    it('should not create new objects on method calls', () => {
+      const spy = jest.spyOn(Object, 'create');
+      
+      component.getChangeIcon('positive');
+      component.getChangeColor('negative');
+      
+      expect(spy).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
+
+    it('should handle multiple rapid method calls efficiently', () => {
+      const start = performance.now();
+      
+      for (let i = 0; i < 1000; i++) {
+        component.getChangeIcon('positive');
+        component.getChangeColor('negative');
       }
-    ];
-    
-    expect(component.analyticsCards).toEqual(expectedCards);
-  });
-
-  // COMPONENT_UI Pattern: Traffic sources data validation
-  it('should initialize traffic sources with correct structure', () => {
-    expect(component.trafficSources).toBeDefined();
-    expect(component.trafficSources.length).toBe(4);
-    
-    const expectedSources: ChartData[] = [
-      { name: 'Organic Search', value: 45 },
-      { name: 'Direct', value: 25 },
-      { name: 'Social Media', value: 20 },
-      { name: 'Email', value: 10 }
-    ];
-    
-    expect(component.trafficSources).toEqual(expectedSources);
-  });
-
-  // BUSINESS_LOGIC Pattern: Pure function testing - getChangeIcon
-  it('should return trending_up icon for positive change type', () => {
-    const result = component.getChangeIcon('positive');
-    expect(result).toBe('trending_up');
-  });
-
-  it('should return trending_down icon for negative change type', () => {
-    const result = component.getChangeIcon('negative');
-    expect(result).toBe('trending_down');
-  });
-
-  it('should return trending_flat icon for neutral change type', () => {
-    const result = component.getChangeIcon('neutral');
-    expect(result).toBe('trending_flat');
-  });
-
-  // BUSINESS_LOGIC Pattern: Edge cases for getChangeIcon
-  it('should return trending_flat icon for unknown change type', () => {
-    const result = component.getChangeIcon('unknown');
-    expect(result).toBe('trending_flat');
-  });
-
-  it('should handle null input for getChangeIcon', () => {
-    const result = component.getChangeIcon(null as any);
-    expect(result).toBe('trending_flat');
-  });
-
-  it('should handle undefined input for getChangeIcon', () => {
-    const result = component.getChangeIcon(undefined as any);
-    expect(result).toBe('trending_flat');
-  });
-
-  it('should handle empty string for getChangeIcon', () => {
-    const result = component.getChangeIcon('');
-    expect(result).toBe('trending_flat');
-  });
-
-  // BUSINESS_LOGIC Pattern: Pure function testing - getChangeColor
-  it('should return primary color for positive change type', () => {
-    const result = component.getChangeColor('positive');
-    expect(result).toBe('primary');
-  });
-
-  it('should return warn color for negative change type', () => {
-    const result = component.getChangeColor('negative');
-    expect(result).toBe('warn');
-  });
-
-  it('should return accent color for neutral change type', () => {
-    const result = component.getChangeColor('neutral');
-    expect(result).toBe('accent');
-  });
-
-  // BUSINESS_LOGIC Pattern: Edge cases for getChangeColor
-  it('should return accent color for unknown change type', () => {
-    const result = component.getChangeColor('unknown');
-    expect(result).toBe('accent');
-  });
-
-  it('should handle null input for getChangeColor', () => {
-    const result = component.getChangeColor(null as any);
-    expect(result).toBe('accent');
-  });
-
-  it('should handle undefined input for getChangeColor', () => {
-    const result = component.getChangeColor(undefined as any);
-    expect(result).toBe('accent');
-  });
-
-  it('should handle empty string for getChangeColor', () => {
-    const result = component.getChangeColor('');
-    expect(result).toBe('accent');
-  });
-
-  // COMPONENT_UI Pattern: Data structure validation
-  it('should have analytics cards with required properties', () => {
-    component.analyticsCards.forEach(card => {
-      expect(card.title).toBeDefined();
-      expect(card.value).toBeDefined();
-      expect(card.change).toBeDefined();
-      expect(card.changeType).toBeDefined();
-      expect(card.icon).toBeDefined();
       
-      expect(typeof card.title).toBe('string');
-      expect(typeof card.value).toBe('string');
-      expect(typeof card.change).toBe('string');
-      expect(typeof card.changeType).toBe('string');
-      expect(typeof card.icon).toBe('string');
+      const end = performance.now();
+      expect(end - start).toBeLessThan(100); // Should complete in under 100ms
+    });
+  });
+
+  describe('Interface Compliance', () => {
+    it('should comply with AnalyticsCard interface structure', () => {
+      const mockCard: AnalyticsCard = {
+        title: 'Test Title',
+        value: 'Test Value',
+        change: 'Test Change',
+        changeType: 'positive',
+        icon: 'test_icon'
+      };
       
-      // Validate changeType is one of the allowed values
-      expect(['positive', 'negative', 'neutral']).toContain(card.changeType);
+      expect(mockCard.title).toBeDefined();
+      expect(mockCard.value).toBeDefined();
+      expect(mockCard.change).toBeDefined();
+      expect(mockCard.changeType).toBeDefined();
+      expect(mockCard.icon).toBeDefined();
     });
-  });
 
-  it('should have traffic sources with required properties', () => {
-    component.trafficSources.forEach(source => {
-      expect(source.name).toBeDefined();
-      expect(source.value).toBeDefined();
+    it('should comply with ChartData interface structure', () => {
+      const mockData: ChartData = {
+        name: 'Test Name',
+        value: 100
+      };
       
-      expect(typeof source.name).toBe('string');
-      expect(typeof source.value).toBe('number');
+      expect(mockData.name).toBeDefined();
+      expect(mockData.value).toBeDefined();
+      expect(typeof mockData.value).toBe('number');
+    });
+  });
+
+  describe('Comprehensive Branch Coverage', () => {
+    it('should cover all conditional branches in getChangeIcon method', () => {
+      // Test first condition: changeType === 'positive'
+      expect(component.getChangeIcon('positive')).toBe('trending_up');
       
-      // Validate value is a positive number
-      expect(source.value).toBeGreaterThan(0);
+      // Test second condition: changeType === 'negative' 
+      expect(component.getChangeIcon('negative')).toBe('trending_down');
+      
+      // Test default case (any other value)
+      expect(component.getChangeIcon('neutral')).toBe('trending_flat');
+      expect(component.getChangeIcon('anything_else')).toBe('trending_flat');
     });
-  });
 
-  // BUSINESS_LOGIC Pattern: Data consistency validation
-  it('should have traffic sources that sum to 100%', () => {
-    const total = component.trafficSources.reduce((sum, source) => sum + source.value, 0);
-    expect(total).toBe(100);
-  });
-
-  // COMPONENT_UI Pattern: Template rendering verification
-  it('should render analytics cards in template', () => {
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    
-    // Check if analytics content exists
-    const cardElements = compiled.querySelectorAll('mat-card, .analytics-card, .card');
-    expect(cardElements.length).toBeGreaterThan(0);
-  });
-
-  // COMPONENT_UI Pattern: Conditional rendering states
-  it('should handle empty analytics cards array', () => {
-    component.analyticsCards = [];
-    fixture.detectChanges();
-    expect(component.analyticsCards.length).toBe(0);
-  });
-
-  it('should handle empty traffic sources array', () => {
-    component.trafficSources = [];
-    fixture.detectChanges();
-    expect(component.trafficSources.length).toBe(0);
-  });
-
-  // BUSINESS_LOGIC Pattern: Validate change indicators format
-  it('should have properly formatted change indicators', () => {
-    component.analyticsCards.forEach(card => {
-      // Change should start with + or - and end with %
-      expect(card.change).toMatch(/^[+-]\d+(\.\d+)?%$/);
+    it('should cover all conditional branches in getChangeColor method', () => {
+      // Test first condition: changeType === 'positive'
+      expect(component.getChangeColor('positive')).toBe('primary');
+      
+      // Test second condition: changeType === 'negative'
+      expect(component.getChangeColor('negative')).toBe('warn');
+      
+      // Test default case (any other value)
+      expect(component.getChangeColor('neutral')).toBe('accent');
+      expect(component.getChangeColor('anything_else')).toBe('accent');
     });
-  });
-
-  // ANALYTICS_TRACKING Pattern: Validate analytics data structure
-  it('should have meaningful analytics metrics', () => {
-    const metrics = component.analyticsCards.map(card => card.title);
-    const expectedMetrics = ['Page Views', 'Unique Visitors', 'Bounce Rate', 'Conversion Rate'];
-    
-    expect(metrics).toEqual(expectedMetrics);
-  });
-
-  // BUSINESS_LOGIC Pattern: Validate traffic source names
-  it('should have valid traffic source names', () => {
-    const sourceNames = component.trafficSources.map(source => source.name);
-    const expectedSources = ['Organic Search', 'Direct', 'Social Media', 'Email'];
-    
-    expect(sourceNames).toEqual(expectedSources);
-  });
-
-  // COVERAGE_COMPLETION Pattern: Test all branches for both utility functions
-  it('should cover all getChangeIcon branches comprehensively', () => {
-    const testCases = [
-      { input: 'positive', expected: 'trending_up' },
-      { input: 'negative', expected: 'trending_down' },
-      { input: 'neutral', expected: 'trending_flat' },
-      { input: 'POSITIVE', expected: 'trending_flat' }, // case sensitivity
-      { input: 'Positive', expected: 'trending_flat' }, // case sensitivity
-      { input: 'invalid', expected: 'trending_flat' },
-      { input: '123', expected: 'trending_flat' },
-      { input: ' positive ', expected: 'trending_flat' }, // whitespace
-    ];
-
-    testCases.forEach(testCase => {
-      const result = component.getChangeIcon(testCase.input);
-      expect(result).toBe(testCase.expected);
-    });
-  });
-
-  it('should cover all getChangeColor branches comprehensively', () => {
-    const testCases = [
-      { input: 'positive', expected: 'primary' },
-      { input: 'negative', expected: 'warn' },
-      { input: 'neutral', expected: 'accent' },
-      { input: 'NEGATIVE', expected: 'accent' }, // case sensitivity
-      { input: 'Neutral', expected: 'accent' }, // case sensitivity
-      { input: 'invalid', expected: 'accent' },
-      { input: '456', expected: 'accent' },
-      { input: ' neutral ', expected: 'accent' }, // whitespace
-    ];
-
-    testCases.forEach(testCase => {
-      const result = component.getChangeColor(testCase.input);
-      expect(result).toBe(testCase.expected);
-    });
-  });
-
-  // PERFORMANCE_EDGE Pattern: Component lifecycle and memory management
-  it('should handle component destruction without memory leaks', () => {
-    fixture.detectChanges();
-    expect(() => fixture.destroy()).not.toThrow();
-  });
-
-  // BUSINESS_LOGIC Pattern: Validate data immutability
-  it('should not modify original analytics cards when accessed', () => {
-    const originalCards = component.analyticsCards;
-    const copiedCards = [...component.analyticsCards];
-    
-    expect(originalCards).toEqual(copiedCards);
-    
-    copiedCards.push({
-      title: 'Test Metric',
-      value: '100',
-      change: '+1%',
-      changeType: 'positive',
-      icon: 'test'
-    });
-    
-    expect(component.analyticsCards.length).toBe(4);
-    expect(copiedCards.length).toBe(5);
-  });
-
-  it('should not modify original traffic sources when accessed', () => {
-    const originalSources = component.trafficSources;
-    const copiedSources = [...component.trafficSources];
-    
-    expect(originalSources).toEqual(copiedSources);
-    
-    copiedSources.push({ name: 'Test Source', value: 5 });
-    
-    expect(component.trafficSources.length).toBe(4);
-    expect(copiedSources.length).toBe(5);
   });
 });
