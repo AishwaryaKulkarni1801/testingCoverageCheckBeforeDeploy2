@@ -1,0 +1,225 @@
+name: CI/CD Pipeline with Test Coverage Check and GitHub Pages Deploy
+
+# Trigger the workflow on every push to the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Set permissions for GitHub Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job 1: Test and Coverage Check
+  test-and-coverage:
+    name: 🧪 Run Tests & Check Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout repository
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js environment
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # Step 3: Cache node_modules for faster builds
+      - name: 💾 Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Step 4: Install dependencies
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # Step 5: Run tests with coverage
+      - name: 🧪 Run Jest tests with coverage
+        run: npm run test -- --coverage --watchAll=false
+        env:
+          CI: true
+
+      # Step 6: Check test coverage threshold (80%)
+      - name: 📊 Verify test coverage meets 80% threshold
+        run: |
+          echo "Checking test coverage results..."
+          
+          # Read coverage summary
+          if [ ! -f coverage/coverage-summary.json ]; then
+            echo "❌ Coverage summary file not found!"
+            exit 1
+          fi
+          
+          # Extract total coverage percentage
+          COVERAGE=$(node -e "
+            const fs = require('fs');
+            const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+            const totalCoverage = coverage.total;
+            
+            console.log('📋 Coverage Summary:');
+            console.log('Lines:', totalCoverage.lines.pct + '%');
+            console.log('Statements:', totalCoverage.statements.pct + '%');
+            console.log('Functions:', totalCoverage.functions.pct + '%');
+            console.log('Branches:', totalCoverage.branches.pct + '%');
+            
+            // Calculate average coverage
+            const avgCoverage = (
+              totalCoverage.lines.pct + 
+              totalCoverage.statements.pct + 
+              totalCoverage.functions.pct + 
+              totalCoverage.branches.pct
+            ) / 4;
+            
+            console.log('Average Coverage:', avgCoverage.toFixed(2) + '%');
+            
+            if (avgCoverage < 80) {
+              console.log('❌ Coverage is below 80% threshold!');
+              process.exit(1);
+            } else {
+              console.log('✅ Coverage meets 80% threshold!');
+            }
+          ")
+          
+          echo "$COVERAGE"
+
+      # Step 7: Upload coverage reports as artifacts
+      - name: 📤 Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: coverage/
+          retention-days: 30
+
+      # Step 8: Comment coverage on PR (if it's a PR)
+      - name: 💬 Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            if (fs.existsSync('coverage/coverage-summary.json')) {
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+              const totalCoverage = coverage.total;
+              
+              const avgCoverage = (
+                totalCoverage.lines.pct + 
+                totalCoverage.statements.pct + 
+                totalCoverage.functions.pct + 
+                totalCoverage.branches.pct
+              ) / 4;
+              
+              const comment = `## 📊 Test Coverage Report
+              
+              | Metric | Coverage |
+              |--------|----------|
+              | Lines | ${totalCoverage.lines.pct}% |
+              | Statements | ${totalCoverage.statements.pct}% |
+              | Functions | ${totalCoverage.functions.pct}% |
+              | Branches | ${totalCoverage.branches.pct}% |
+              | **Average** | **${avgCoverage.toFixed(2)}%** |
+              
+              ${avgCoverage >= 80 ? '✅ Coverage threshold met!' : '❌ Coverage below 80% threshold!'}
+              `;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+  # Job 2: Build and Deploy to GitHub Pages
+  build-and-deploy:
+    name: 🚀 Build & Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: test-and-coverage # This job depends on the test job passing
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      # Step 1: Checkout repository
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js environment
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # Step 3: Cache node_modules
+      - name: 💾 Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Step 4: Install dependencies
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # Step 5: Build Angular application for production
+      - name: 🏗️ Build Angular app
+        run: npm run build -- --base-href=/testingCoverageCheckBeforeDeploy2/
+
+      # Step 6: Setup GitHub Pages
+      - name: 🔧 Setup Pages
+        uses: actions/configure-pages@v4
+
+      # Step 7: Upload build artifacts to GitHub Pages
+      - name: 📤 Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist/testing-coverage-check-before-deploy2'
+
+      # Step 8: Deploy to GitHub Pages
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Job 3: Notification
+  notify:
+    name: 📢 Send Notifications
+    runs-on: ubuntu-latest
+    needs: [test-and-coverage, build-and-deploy]
+    if: always()
+    
+    steps:
+      - name: 📢 Deployment Status
+        run: |
+          if [ "${{ needs.test-and-coverage.result }}" == "success" ] && [ "${{ needs.build-and-deploy.result }}" == "success" ]; then
+            echo "🎉 Deployment successful!"
+            echo "✅ Tests passed with adequate coverage"
+            echo "🚀 Application deployed to GitHub Pages"
+          elif [ "${{ needs.test-and-coverage.result }}" == "failure" ]; then
+            echo "❌ Deployment failed: Tests failed or coverage below 80%"
+            exit 1
+          elif [ "${{ needs.build-and-deploy.result }}" == "failure" ]; then
+            echo "❌ Deployment failed: Build or deployment error"
+            exit 1
+          else
+            echo "⚠️ Deployment status unclear"
+          fi
