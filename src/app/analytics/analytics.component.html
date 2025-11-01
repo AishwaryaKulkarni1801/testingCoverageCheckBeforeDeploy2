@@ -1,0 +1,117 @@
+<div class="analytics-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Analytics Dashboard</h1>
+    <p>Track your website performance and user engagement</p>
+  </div>
+
+  <!-- Analytics Cards -->
+  <div class="analytics-grid">
+    <mat-card *ngFor="let card of analyticsCards" class="analytics-card demo-card fade-in-up">
+      <mat-card-content>
+        <div class="card-content">
+          <div class="card-info">
+            <div class="card-icon">
+              <mat-icon>{{ card.icon }}</mat-icon>
+            </div>
+            <div class="card-data">
+              <h3>{{ card.value }}</h3>
+              <p>{{ card.title }}</p>
+              <div class="change-indicator" [ngClass]="'change-' + card.changeType">
+                <mat-icon>{{ getChangeIcon(card.changeType) }}</mat-icon>
+                <span>{{ card.change }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <!-- Traffic Sources -->
+    <mat-card class="chart-card demo-card fade-in-up">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>traffic</mat-icon>
+          Traffic Sources
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="traffic-sources">
+          <div *ngFor="let source of trafficSources" class="traffic-item">
+            <div class="traffic-info">
+              <span class="source-name">{{ source.name }}</span>
+              <span class="source-percentage">{{ source.value }}%</span>
+            </div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="source.value"
+              class="traffic-bar">
+            </mat-progress-bar>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Performance Chart -->
+    <mat-card class="chart-card demo-card fade-in-up">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>show_chart</mat-icon>
+          Performance Overview
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-placeholder">
+          <mat-icon class="large-icon">insert_chart</mat-icon>
+          <p>Interactive performance chart</p>
+          <p class="chart-subtitle">Real-time data visualization coming soon</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Additional Metrics -->
+  <mat-card class="metrics-card demo-card fade-in-up">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>assessment</mat-icon>
+        Key Metrics
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <mat-icon>timer</mat-icon>
+          <div class="metric-data">
+            <h4>Avg. Session Duration</h4>
+            <span>4m 32s</span>
+          </div>
+        </div>
+        <div class="metric-item">
+          <mat-icon>pages</mat-icon>
+          <div class="metric-data">
+            <h4>Pages per Session</h4>
+            <span>3.2</span>
+          </div>
+        </div>
+        <div class="metric-item">
+          <mat-icon>devices</mat-icon>
+          <div class="metric-data">
+            <h4>Mobile Traffic</h4>
+            <span>68%</span>
+          </div>
+        </div>
+        <div class="metric-item">
+          <mat-icon>language</mat-icon>
+          <div class="metric-data">
+            <h4>Countries</h4>
+            <span>45</span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

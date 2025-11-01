@@ -1,0 +1,182 @@
+<div class="settings-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Settings</h1>
+    <p>Customize your application preferences and account settings</p>
+  </div>
+
+  <!-- Settings Actions -->
+  <div class="settings-actions">
+    <button mat-raised-button color="primary" (click)="exportSettings()">
+      <mat-icon>download</mat-icon>
+      Export Settings
+    </button>
+    <button mat-raised-button color="accent" (click)="importSettings()">
+      <mat-icon>upload</mat-icon>
+      Import Settings
+    </button>
+    <button mat-raised-button color="warn" (click)="resetToDefaults()">
+      <mat-icon>restore</mat-icon>
+      Reset to Defaults
+    </button>
+  </div>
+
+  <!-- Settings Categories -->
+  <div class="settings-grid">
+    <mat-card *ngFor="let category of settingCategories" class="category-card demo-card fade-in-up">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>{{ category.icon }}</mat-icon>
+          {{ category.name }}
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="settings-list">
+          <div *ngFor="let setting of category.settings" class="setting-item">
+            <div class="setting-info">
+              <h4>{{ setting.name }}</h4>
+              <p>{{ setting.description }}</p>
+            </div>
+            
+            <div class="setting-control">
+              <!-- Boolean Toggle -->
+              <mat-slide-toggle 
+                *ngIf="setting.type === 'boolean'"
+                [checked]="setting.value"
+                (change)="onSettingChange(setting, $event.checked)">
+              </mat-slide-toggle>
+              
+              <!-- Text Input -->
+              <mat-form-field *ngIf="setting.type === 'text'" appearance="outline">
+                <input matInput 
+                       [value]="setting.value" 
+                       (input)="onSettingChange(setting, $event.target.value)">
+              </mat-form-field>
+              
+              <!-- Number Input -->
+              <mat-form-field *ngIf="setting.type === 'number'" appearance="outline" class="number-field">
+                <input matInput 
+                       type="number"
+                       [value]="setting.value" 
+                       (input)="onSettingChange(setting, $event.target.value)">
+              </mat-form-field>
+              
+              <!-- Select Dropdown -->
+              <mat-form-field *ngIf="setting.type === 'select'" appearance="outline">
+                <mat-select [value]="setting.value" (selectionChange)="onSettingChange(setting, $event.value)">
+                  <mat-option *ngFor="let option of setting.options" [value]="option">
+                    {{ option }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Account Settings -->
+  <mat-card class="account-card demo-card fade-in-up">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>account_circle</mat-icon>
+        Account Settings
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="account-grid">
+        <div class="account-section">
+          <h4>Profile Information</h4>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Display Name</mat-label>
+              <input matInput value="John Doe">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput value="john.doe@company.com">
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Job Title</mat-label>
+              <input matInput value="Senior Developer">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Department</mat-label>
+              <input matInput value="Engineering">
+            </mat-form-field>
+          </div>
+        </div>
+        
+        <div class="account-section">
+          <h4>Security Options</h4>
+          <div class="security-actions">
+            <button mat-stroked-button color="primary">
+              <mat-icon>lock_reset</mat-icon>
+              Change Password
+            </button>
+            <button mat-stroked-button color="accent">
+              <mat-icon>vpn_key</mat-icon>
+              Manage API Keys
+            </button>
+            <button mat-stroked-button color="warn">
+              <mat-icon>logout</mat-icon>
+              Sign Out All Devices
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    
+    <mat-card-actions align="end">
+      <button mat-button>Cancel</button>
+      <button mat-raised-button color="primary">Save Changes</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Danger Zone -->
+  <mat-card class="danger-card demo-card fade-in-up">
+    <mat-card-header>
+      <mat-card-title class="danger-title">
+        <mat-icon>warning</mat-icon>
+        Danger Zone
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="danger-actions">
+        <div class="danger-item">
+          <div class="danger-info">
+            <h4>Export Account Data</h4>
+            <p>Download a copy of all your account data and settings</p>
+          </div>
+          <button mat-stroked-button>Export Data</button>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <div class="danger-item">
+          <div class="danger-info">
+            <h4>Deactivate Account</h4>
+            <p>Temporarily disable your account while preserving your data</p>
+          </div>
+          <button mat-stroked-button color="warn">Deactivate</button>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <div class="danger-item">
+          <div class="danger-info">
+            <h4>Delete Account</h4>
+            <p>Permanently delete your account and all associated data</p>
+          </div>
+          <button mat-stroked-button color="warn">Delete Account</button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

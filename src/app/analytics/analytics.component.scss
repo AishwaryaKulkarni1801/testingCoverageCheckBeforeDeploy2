@@ -1,0 +1,227 @@
+.analytics-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  text-align: center;
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 8px;
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.analytics-card {
+  .card-content {
+    .card-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      
+      .card-icon {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        mat-icon {
+          color: white;
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
+      }
+      
+      .card-data {
+        flex: 1;
+        
+        h3 {
+          font-size: 2rem;
+          font-weight: 600;
+          margin: 0 0 4px 0;
+        }
+        
+        p {
+          margin: 0 0 8px 0;
+          color: #666;
+          font-size: 0.9rem;
+        }
+        
+        .change-indicator {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.85rem;
+          font-weight: 500;
+          
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+          
+          &.change-positive {
+            color: #4caf50;
+          }
+          
+          &.change-negative {
+            color: #f44336;
+          }
+          
+          &.change-neutral {
+            color: #ff9800;
+          }
+        }
+      }
+    }
+  }
+}
+
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.chart-card {
+  .traffic-sources {
+    .traffic-item {
+      margin-bottom: 20px;
+      
+      .traffic-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        
+        .source-name {
+          font-weight: 500;
+        }
+        
+        .source-percentage {
+          font-weight: 600;
+          color: #667eea;
+        }
+      }
+      
+      .traffic-bar {
+        height: 8px;
+        border-radius: 4px;
+      }
+    }
+  }
+  
+  .chart-placeholder {
+    text-align: center;
+    padding: 48px 24px;
+    color: #666;
+    
+    .large-icon {
+      font-size: 72px;
+      width: 72px;
+      height: 72px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    p {
+      margin: 8px 0;
+      
+      &.chart-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+.metrics-card {
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    
+    .metric-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      
+      mat-icon {
+        color: #667eea;
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+      }
+      
+      .metric-data {
+        h4 {
+          margin: 0 0 4px 0;
+          font-size: 0.9rem;
+          color: #666;
+          font-weight: 500;
+        }
+        
+        span {
+          font-size: 1.4rem;
+          font-weight: 600;
+          color: #333;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .analytics-container {
+    padding: 16px;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

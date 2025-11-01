@@ -1,0 +1,195 @@
+<div class="team-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Team Directory</h1>
+    <p>Manage your team members and track their progress</p>
+  </div>
+
+  <!-- Team Stats -->
+  <div class="team-stats">
+    <mat-card class="stat-card demo-card fade-in-up gradient-bg">
+      <mat-card-content>
+        <div class="stat-content">
+          <mat-icon>people</mat-icon>
+          <div class="stat-info">
+            <h3>{{ teamMembers.length }}</h3>
+            <p>Total Members</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card demo-card fade-in-up gradient-bg-2">
+      <mat-card-content>
+        <div class="stat-content">
+          <mat-icon>group_work</mat-icon>
+          <div class="stat-info">
+            <h3>{{ teamMembers.filter(m => m.status === 'online').length }}</h3>
+            <p>Online Now</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card demo-card fade-in-up gradient-bg-3">
+      <mat-card-content>
+        <div class="stat-content">
+          <mat-icon>trending_up</mat-icon>
+          <div class="stat-info">
+            <h3>{{ teamMembers.reduce((sum, m) => sum + m.tasksCompleted, 0) }}</h3>
+            <p>Tasks Completed</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Team Grid View -->
+  <div class="team-grid">
+    <mat-card *ngFor="let member of teamMembers" class="member-card demo-card fade-in-up">
+      <mat-card-content>
+        <div class="member-header">
+          <div class="avatar-container">
+            <div class="avatar">{{ member.avatar }}</div>
+            <div class="status-indicator" [ngClass]="'status-' + member.status">
+              <mat-icon [color]="getStatusColor(member.status)">{{ getStatusIcon(member.status) }}</mat-icon>
+            </div>
+          </div>
+          <div class="member-info">
+            <h3>{{ member.name }}</h3>
+            <p class="role">{{ member.role }}</p>
+            <mat-chip [color]="getDepartmentColor(member.department)" selected class="department-chip">
+              {{ member.department }}
+            </mat-chip>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="member-stats">
+          <div class="stat-item">
+            <mat-icon>work</mat-icon>
+            <div class="stat-data">
+              <span class="stat-value">{{ member.projects }}</span>
+              <span class="stat-label">Projects</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <mat-icon>task_alt</mat-icon>
+            <div class="stat-data">
+              <span class="stat-value">{{ member.tasksCompleted }}</span>
+              <span class="stat-label">Tasks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="member-actions">
+          <button mat-icon-button color="primary" matTooltip="Send Message">
+            <mat-icon>message</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" matTooltip="View Profile">
+            <mat-icon>person</mat-icon>
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="memberMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          
+          <mat-menu #memberMenu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>edit</mat-icon>
+              <span>Edit Profile</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>assignment</mat-icon>
+              <span>Assign Task</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>event</mat-icon>
+              <span>Schedule Meeting</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Table View Toggle -->
+  <mat-card class="table-card demo-card fade-in-up">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>table_view</mat-icon>
+        Team Table View
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="teamMembers" class="team-table">
+        
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let member">
+            <div class="name-cell">
+              <div class="mini-avatar">{{ member.avatar }}</div>
+              <div class="name-info">
+                <span class="name">{{ member.name }}</span>
+                <span class="email">{{ member.email }}</span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Role Column -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Role</th>
+          <td mat-cell *matCellDef="let member">{{ member.role }}</td>
+        </ng-container>
+
+        <!-- Department Column -->
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef>Department</th>
+          <td mat-cell *matCellDef="let member">
+            <mat-chip [color]="getDepartmentColor(member.department)" selected>
+              {{ member.department }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let member">
+            <div class="status-cell">
+              <mat-icon [color]="getStatusColor(member.status)">{{ getStatusIcon(member.status) }}</mat-icon>
+              <span>{{ member.status | titlecase }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Projects Column -->
+        <ng-container matColumnDef="projects">
+          <th mat-header-cell *matHeaderCellDef>Projects</th>
+          <td mat-cell *matCellDef="let member">{{ member.projects }}</td>
+        </ng-container>
+
+        <!-- Tasks Column -->
+        <ng-container matColumnDef="tasks">
+          <th mat-header-cell *matHeaderCellDef>Tasks</th>
+          <td mat-cell *matCellDef="let member">{{ member.tasksCompleted }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let member">
+            <button mat-icon-button color="primary">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

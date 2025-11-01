@@ -1,0 +1,254 @@
+.team-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  text-align: center;
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 8px;
+    background: linear-gradient(45deg, #f093fb, #f5576c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+.team-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+  
+  .stat-card {
+    .stat-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      
+      mat-icon {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+      }
+      
+      .stat-info {
+        h3 {
+          font-size: 2rem;
+          font-weight: 600;
+          margin: 0 0 4px 0;
+        }
+        
+        p {
+          margin: 0;
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.member-card {
+  .member-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+    
+    .avatar-container {
+      position: relative;
+      
+      .avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+      
+      .status-indicator {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        background: white;
+        border-radius: 50%;
+        padding: 2px;
+        
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+        
+        &.status-online mat-icon {
+          color: #4caf50;
+        }
+        
+        &.status-away mat-icon {
+          color: #ff9800;
+        }
+        
+        &.status-offline mat-icon {
+          color: #f44336;
+        }
+      }
+    }
+    
+    .member-info {
+      flex: 1;
+      
+      h3 {
+        margin: 0 0 4px 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+      
+      .role {
+        margin: 0 0 8px 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+      
+      .department-chip {
+        font-size: 0.8rem;
+      }
+    }
+  }
+  
+  .member-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 16px 0;
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      mat-icon {
+        color: #667eea;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+      
+      .stat-data {
+        display: flex;
+        flex-direction: column;
+        
+        .stat-value {
+          font-weight: 600;
+          font-size: 1.1rem;
+        }
+        
+        .stat-label {
+          font-size: 0.8rem;
+          color: #666;
+        }
+      }
+    }
+  }
+  
+  .member-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
+
+.table-card {
+  .team-table {
+    width: 100%;
+    
+    .name-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      .mini-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      
+      .name-info {
+        display: flex;
+        flex-direction: column;
+        
+        .name {
+          font-weight: 500;
+        }
+        
+        .email {
+          font-size: 0.8rem;
+          color: #666;
+        }
+      }
+    }
+    
+    .status-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .team-container {
+    padding: 16px;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .team-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-card {
+    overflow-x: auto;
+  }
+}
